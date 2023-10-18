@@ -59,7 +59,17 @@ describe('POST /launch', () => {
 	});
 });
 describe('DELETE /launch', () => {
-	// test: we should return the launch deleted withe upcoming: false, success: false,
+	// test: should return the launch deleted withe upcoming: false, success: false,
+	test('should return the launch deleted withe upcoming: false, success: false', async () => {
+		const response = await request(app).delete('/launch/100').expect(200);
+		expect(response.body.upcoming).toBeFalsy();
+		expect(response.body.success).toBeFalsy();
+	});
+	// test: should return 400 status if the launch does not exist.
+	test('should return 400 status if the launch does not exist', async () => {
+		const response = await request(app).delete('/launch/1').expect(400);
+		expect(response.body).toEqual({
+			error: 'this launch does not exist .',
+		});
+	});
 });
-
-/**/

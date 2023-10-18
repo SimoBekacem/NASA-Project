@@ -2,6 +2,8 @@ const {
 	launches,
 	transformMapToObject,
 	addLaunchToMap,
+	deleteLaunchFromMap,
+	launchIsExist,
 } = require('../../modules/launch.module');
 
 function getLaunch(req, res) {
@@ -33,7 +35,19 @@ function postLaunch(req, res) {
 	}
 }
 
+function deleteLaunch(req, res) {
+	const launchId = Number(req.params.id);
+	if (!launchIsExist(launchId)) {
+		res.status(400).json({
+			error: 'this launch does not exist .',
+		});
+	} else {
+		res.status(200).json(deleteLaunchFromMap(launchId));
+	}
+}
+
 module.exports = {
 	getLaunch,
 	postLaunch,
+	deleteLaunch,
 };

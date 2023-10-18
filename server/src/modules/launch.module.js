@@ -26,8 +26,19 @@ function addLaunchToMap(launch) {
 	});
 	launches.set(firstLaunchNumber, newLaunch);
 }
+function launchIsExist(launchId) {
+	return launches.has(launchId);
+}
+function deleteLaunchFromMap(launchId) {
+	const deletedLaunch = launches.get(launchId);
+	deletedLaunch.upcoming = false;
+	deletedLaunch.success = false;
+	return deletedLaunch;
+}
 module.exports = {
 	launches,
 	transformMapToObject,
 	addLaunchToMap,
+	launchIsExist,
+	deleteLaunchFromMap,
 };
