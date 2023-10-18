@@ -3,6 +3,7 @@
  * we make the request by doing this app.use('/list', controler).
  * morgan and cors should put here because we are done withe server file .
  */
+const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
@@ -16,6 +17,7 @@ app.use(
 		origin: 'http://localhost:3001',
 	})
 );
+app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(morgan('combined'));
 app.use(express.json());
 app.use('/planets', planetsRouter);
