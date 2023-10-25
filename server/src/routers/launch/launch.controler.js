@@ -12,10 +12,6 @@ function getLaunch(req, res) {
 
 function postLaunch(req, res) {
 	let launch = req.body;
-	console.log(
-		'🚀 ~ file: launch.controler.js:13 ~ postLaunch ~ launch:',
-		launch
-	);
 	if (
 		!launch.launchDate ||
 		!launch.mission ||
