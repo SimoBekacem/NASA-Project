@@ -6,7 +6,7 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"watch": "cd src && nodemon server",
-		"watch-test": "jest --watchAll"
+		"watch-test": "jest  --detectOpenHandles --watchAll"
 	},
 	"keywords": [],
 	"author": "",
