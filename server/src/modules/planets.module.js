@@ -7,8 +7,7 @@
 const fs = require('fs');
 const path = require('path');
 const { parse } = require('csv-parse');
-const habitablePlanetsList = [];
-const planets = [];
+const planets = require('./planets.mongo');
 
 const habitablePlanets = (planet) => {
 	return (
@@ -30,23 +29,49 @@ function loadPlanetData() {
 					columns: true,
 				})
 			)
-			.on('data', (data) => {
-				habitablePlanets(data) ? habitablePlanetsList.push(data) : null;
+			.on('data', async (data) => {
+				if (habitablePlanets(data)) {
+					await upsertPlanet(data);
+				}
 			})
 			.on('error', (error) => {
 				console.log(`there is an error witch is :${error}`);
 				reject();
 			})
-			.on('end', () => {
-				habitablePlanetsList.forEach((planet) => {
-					planets.push(planet);
-				});
+			.on('end', async () => {
+				const planetsLenght = (await getAllPlanets()).length;
+				console.log(
+					`now we have ${planetsLenght} planet in the data base.`
+				);
 				resolve();
 			});
 	});
 }
 
+async function upsertPlanet(planet) {
+	try {
+		await planets.updateOne(
+			{
+				kepler_name: planet.kepler_name,
+			},
+			{
+				kepler_name: planet.kepler_name,
+			},
+			{
+				upsert: true,
+			}
+		);
+	} catch (error) {
+		console.log(`there is a problem inserting ${planet} in the database.`);
+		console.log(`error: ${error}`);
+	}
+}
+
+async function getAllPlanets() {
+	return await planets.find({}, { _id: 0, __v: 0 });
+}
+
 module.exports = {
 	loadPlanetData,
-	planets,
+	getAllPlanets,
 };
