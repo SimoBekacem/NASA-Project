@@ -1,16 +1,16 @@
 const {
 	launches,
-	transformMapToObject,
-	addLaunchToMap,
+	getLaunches,
+	addLaunch,
 	deleteLaunchFromMap,
 	launchIsExist,
 } = require('../../modules/launch.module');
 
-function getLaunch(req, res) {
-	return res.status(200).json(transformMapToObject(launches));
+async function getLaunch(req, res) {
+	return res.status(200).json(await getLaunches(launches));
 }
 
-function postLaunch(req, res) {
+async function postLaunch(req, res) {
 	let launch = req.body;
 	if (
 		!launch.launchDate ||
@@ -26,19 +26,19 @@ function postLaunch(req, res) {
 			error: 'your date format is not acceptebal',
 		});
 	} else {
-		addLaunchToMap(launch);
+		await addLaunch(launch);
 		return res.status(201).json(launch);
 	}
 }
 
-function deleteLaunch(req, res) {
+async function deleteLaunch(req, res) {
 	const launchId = Number(req.params.id);
-	if (!launchIsExist(launchId)) {
+	if (!(await launchIsExist(launchId))) {
 		res.status(400).json({
 			error: 'this launch does not exist .',
 		});
 	} else {
-		res.status(200).json(deleteLaunchFromMap(launchId));
+		res.status(200).json(await deleteLaunchFromMap(launchId));
 	}
 }
 

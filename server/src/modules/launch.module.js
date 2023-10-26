@@ -1,44 +1,78 @@
 const launches = new Map();
-let firstLaunchNumber = 100;
-const launch = {
-	flightNumber: 100,
-	mission: 'Kepler Exploration X',
-	rocket: 'Explorer IS1',
-	launchDate: new Date('December 27, 2030'),
-	target: 'Kepler-442 b',
-	customer: ['ZTM', 'NASA'],
-	upcoming: true,
-	success: true,
-};
-
-launches.set(launch.flightNumber, launch);
-
-function transformMapToObject(launches) {
-	return Array.from(launches.values());
+const launchesDB = require('./launch.mongo');
+async function getLaunches(launches) {
+	try {
+		return await launchesDB.find(
+			{},
+			{
+				_id: 0,
+				__v: 0,
+			}
+		);
+	} catch (error) {
+		console.log(
+			`There is a porble in getting the launches wich is: ${error}`
+		);
+	}
 }
-function addLaunchToMap(launch) {
-	firstLaunchNumber++;
+
+async function getLastFilghtNumber() {
+	const lastLuanch = await launchesDB.findOne().sort('-flightNumber');
+	return lastLuanch ? lastLuanch.flightNumber : 99;
+}
+
+async function addLaunch(launch) {
+	const lastFilghtNumber = await getLastFilghtNumber();
 	const newLaunch = Object.assign(launch, {
-		flightNumber: firstLaunchNumber,
+		flightNumber: lastFilghtNumber + 1,
 		customer: ['ZTM', 'NASA'],
 		upcoming: true,
 		success: true,
 	});
-	launches.set(firstLaunchNumber, newLaunch);
+	try {
+		await launchesDB.findOneAndUpdate(
+			{
+				flightNumber: lastFilghtNumber + 1,
+			},
+			newLaunch,
+			{
+				upsert: true,
+			}
+		);
+	} catch (error) {
+		console.log(
+			`There is a problem in inserting the new launch wich is error: ${error}`
+		);
+	}
 }
-function launchIsExist(launchId) {
-	return launches.has(launchId);
+
+async function launchIsExist(launchId) {
+	return await launchesDB.findOne({ flightNumber: launchId });
 }
-function deleteLaunchFromMap(launchId) {
-	const deletedLaunch = launches.get(launchId);
-	deletedLaunch.upcoming = false;
-	deletedLaunch.success = false;
-	return deletedLaunch;
+async function deleteLaunchFromMap(launchId) {
+	try {
+		await launchesDB.findOneAndUpdate(
+			{
+				flightNumber: launchId,
+			},
+			{
+				upcoming: false,
+				success: false,
+			}
+		);
+		return {
+			ok: true,
+		};
+	} catch (error) {
+		console.log(
+			`There is a problem in deleting the launch from the database wich is error: ${error}`
+		);
+	}
 }
 module.exports = {
 	launches,
-	transformMapToObject,
-	addLaunchToMap,
+	getLaunches,
+	addLaunch,
 	launchIsExist,
 	deleteLaunchFromMap,
 };
