@@ -32,7 +32,6 @@ function useLaunches(onSuccessSound, onAbortSound, onFailureSound) {
 			});
 
 			const success = response.ok;
-
 			if (success) {
 				getLaunches();
 				setTimeout(() => {
@@ -60,7 +59,6 @@ function useLaunches(onSuccessSound, onAbortSound, onFailureSound) {
 		},
 		[getLaunches, onAbortSound, onFailureSound]
 	);
-
 	return {
 		launches,
 		isPendingLaunch,

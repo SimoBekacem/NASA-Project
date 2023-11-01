@@ -1,30 +1,22 @@
-const URL_LINK = 'http://localhost:8080';
+const API_URL = 'http://localhost:8080/v1';
+
 async function httpGetPlanets() {
 	// Load planets and return as JSON.
-	const response = await fetch(`${URL_LINK}/planets`);
-	return response.json();
+	const respanse = await fetch(`${API_URL}/planets`);
+	return respanse.json();
 }
 
 async function httpGetLaunches() {
 	// Load launches, sort by flight number, and return as JSON.
-	try {
-		const responce = await fetch(`${URL_LINK}/launch`);
-		return responce.json();
-	} catch (error) {
-		return {
-			ok: false,
-		};
-	}
+	const respanse = await fetch(`${API_URL}/launch`);
+	const launchesData = respanse.json();
+	return launchesData;
 }
 
 async function httpSubmitLaunch(launch) {
-	console.log(
-		'🚀 ~ file: requests.js:21 ~ httpSubmitLaunch ~ launch:',
-		launch
-	);
 	// Submit given launch data to launch system.
 	try {
-		return await fetch(`${URL_LINK}/launch`, {
+		return await fetch(`${API_URL}/launch`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -41,7 +33,7 @@ async function httpSubmitLaunch(launch) {
 async function httpAbortLaunch(id) {
 	// Delete launch with given ID.
 	try {
-		return await fetch(`${URL_LINK}/launch/${id}`, {
+		return await fetch(`${API_URL}/launch/${id}`, {
 			method: 'delete',
 		});
 	} catch (error) {
