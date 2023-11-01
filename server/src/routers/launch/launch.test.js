@@ -78,7 +78,7 @@ describe('Launches API', () => {
 		// test: should return 400 status if the launch does not exist.
 		test('should return 400 status if the launch does not exist', async () => {
 			const response = await request(app)
-				.delete('/v1/launch/1')
+				.delete('/v1/launch/0')
 				.expect(400);
 			expect(response.body).toEqual({
 				error: 'this launch does not exist .',

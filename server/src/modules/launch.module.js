@@ -1,4 +1,6 @@
 const launchesDB = require('./launch.mongo');
+const axios = require('axios');
+
 async function getLaunches() {
 	try {
 		return await launchesDB.find(
@@ -68,6 +70,60 @@ async function deleteLaunchFromMap(launchId) {
 		);
 	}
 }
+
+async function getLuanchesFromSpaceX() {
+	const response = await axios.post(
+		'https://api.spacexdata.com/v4/launches/query',
+		{
+			query: {},
+			options: {
+				pagination: false,
+				populate: [
+					{
+						path: 'rocket',
+						select: {
+							name: 1,
+						},
+					},
+					{
+						path: 'payloads',
+						select: {
+							customers: 1,
+						},
+					},
+				],
+			},
+		}
+	);
+	response.data.docs.map(async (launch) => {
+		await saveLaunch(launch);
+	});
+}
+async function saveLaunch(launch) {
+	const customers = await launch.payloads.flatMap((payload) => {
+		return payload.customers;
+	});
+	const newLaunch = {
+		flightNumber: launch.flight_number,
+		customers: customers,
+		launchDate: launch.date_local,
+		mission: launch.name,
+		rocket: launch.rocket.name,
+		success: launch.success,
+		upcoming: launch.upcoming,
+	};
+
+	await launchesDB.findOneAndUpdate(
+		{
+			flightNumber: launch.flight_number,
+		},
+		newLaunch,
+		{
+			upsert: true,
+		}
+	);
+}
+getLuanchesFromSpaceX();
 module.exports = {
 	getLaunches,
 	addLaunch,
