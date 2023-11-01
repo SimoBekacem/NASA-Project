@@ -1,6 +1,5 @@
-const launches = new Map();
 const launchesDB = require('./launch.mongo');
-async function getLaunches(launches) {
+async function getLaunches() {
 	try {
 		return await launchesDB.find(
 			{},
@@ -70,7 +69,6 @@ async function deleteLaunchFromMap(launchId) {
 	}
 }
 module.exports = {
-	launches,
 	getLaunches,
 	addLaunch,
 	launchIsExist,

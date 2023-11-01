@@ -13,7 +13,7 @@ describe('Launches API', () => {
 		// test: should get the responce with the status 200 and content-type json.
 		test('should get the responce with the status 200 and content-type json', async () => {
 			const response = await request(app)
-				.get('/launch')
+				.get('/v1/launch')
 				.expect(200)
 				.expect('Content-Type', /json/);
 		});
@@ -39,7 +39,7 @@ describe('Launches API', () => {
 		// test: should post all the attributs wich are  launchDate, mission, rocket and the target .
 		test('should post all the attributs wich are  launchDate, mission, rocket and the target', async () => {
 			const response = await request(app)
-				.post('/launch')
+				.post('/v1/launch')
 				.send(launchWithMissingData)
 				.expect(400);
 			expect(response.body).toEqual({
@@ -49,7 +49,7 @@ describe('Launches API', () => {
 		// test: should veriffy the format of the date .
 		test('should veriffy the format of the date', async () => {
 			const response = await request(app)
-				.post('/launch')
+				.post('/v1/launch')
 				.send(launchWithWrongDate)
 				.expect(400);
 			expect(response.body).toEqual({
@@ -59,7 +59,7 @@ describe('Launches API', () => {
 		// test: should return the object if it posted successfully .
 		test('should return the object if it posted successfully', async () => {
 			const response = await request(app)
-				.post('/launch')
+				.post('/v1/launch')
 				.send(launch)
 				.expect(201)
 				.expect('Content-Type', /json/);
@@ -70,14 +70,16 @@ describe('Launches API', () => {
 		// test: should return the launch deleted withe upcoming: false, success: false,
 		test('should return the launch deleted withe upcoming: false, success: false', async () => {
 			const response = await request(app)
-				.delete('/launch/100')
+				.delete('/v1/launch/100')
 				.expect(200);
 			expect(response.body.upcoming).toBeFalsy();
 			expect(response.body.success).toBeFalsy();
 		});
 		// test: should return 400 status if the launch does not exist.
 		test('should return 400 status if the launch does not exist', async () => {
-			const response = await request(app).delete('/launch/1').expect(400);
+			const response = await request(app)
+				.delete('/v1/launch/1')
+				.expect(400);
 			expect(response.body).toEqual({
 				error: 'this launch does not exist .',
 			});

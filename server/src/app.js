@@ -9,8 +9,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const app = express();
 
-const planetsRouter = require('./routers/planets/planets.router');
-const launchRouter = require('./routers/launch/launch.router');
+const api = require('./api');
 
 app.use(
 	cors({
@@ -20,7 +19,6 @@ app.use(
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(morgan('combined'));
 app.use(express.json());
-app.use('/planets', planetsRouter);
-app.use('/launch', launchRouter);
+app.use('/v1', api);
 
 module.exports = app;

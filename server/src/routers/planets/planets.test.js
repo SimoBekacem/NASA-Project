@@ -11,7 +11,7 @@ describe('GET /planets', () => {
 	});
 	test('should responce with 200 ok', async () => {
 		const responce = await request(app)
-			.get('/planets')
+			.get('/v1/planets')
 			.expect('Content-Type', /json/)
 			.expect(200);
 	});
