@@ -16,12 +16,10 @@ async function getLaunches() {
 		);
 	}
 }
-
 async function getLastFilghtNumber() {
 	const lastLuanch = await launchesDB.findOne().sort('-flightNumber');
 	return lastLuanch ? lastLuanch.flightNumber : 99;
 }
-
 async function addLaunch(launch) {
 	const lastFilghtNumber = await getLastFilghtNumber();
 	const newLaunch = Object.assign(launch, {
@@ -46,9 +44,11 @@ async function addLaunch(launch) {
 		);
 	}
 }
-
-async function launchIsExist(launchId) {
-	return await launchesDB.findOne({ flightNumber: launchId });
+async function launchIsExist(filter) {
+	return await launchesDB.findOne(filter);
+}
+async function launchIsExistWithId(launchId) {
+	return await launchIsExist({ flightNumber: launchId });
 }
 async function deleteLaunchFromMap(launchId) {
 	try {
@@ -70,8 +70,18 @@ async function deleteLaunchFromMap(launchId) {
 		);
 	}
 }
-
 async function getLuanchesFromSpaceX() {
+	if (
+		await launchIsExist({
+			flightNumber: 1,
+			mission: 'FalconSat',
+			rocket: 'Falcon 1',
+		})
+	) {
+		console.log('the spaceX launches are alredy exist in the database.');
+		return;
+	}
+	console.log('loading the data from the spaceX api');
 	const response = await axios.post(
 		'https://api.spacexdata.com/v4/launches/query',
 		{
@@ -98,35 +108,42 @@ async function getLuanchesFromSpaceX() {
 	response.data.docs.map(async (launch) => {
 		await saveLaunch(launch);
 	});
+	return;
 }
 async function saveLaunch(launch) {
-	const customers = await launch.payloads.flatMap((payload) => {
-		return payload.customers;
-	});
-	const newLaunch = {
-		flightNumber: launch.flight_number,
-		customers: customers,
-		launchDate: launch.date_local,
-		mission: launch.name,
-		rocket: launch.rocket.name,
-		success: launch.success,
-		upcoming: launch.upcoming,
-	};
-
-	await launchesDB.findOneAndUpdate(
-		{
+	try {
+		const customers = await launch.payloads.flatMap((payload) => {
+			return payload.customers;
+		});
+		const newLaunch = {
 			flightNumber: launch.flight_number,
-		},
-		newLaunch,
-		{
-			upsert: true,
-		}
-	);
+			customers: customers,
+			launchDate: launch.date_local,
+			mission: launch.name,
+			rocket: launch.rocket.name,
+			success: launch.success,
+			upcoming: launch.upcoming,
+		};
+
+		await launchesDB.findOneAndUpdate(
+			{
+				flightNumber: launch.flight_number,
+			},
+			newLaunch,
+			{
+				upsert: true,
+			}
+		);
+	} catch (error) {
+		console.log(
+			'there is an essue with saving the launch that i get from the spacex api in the mogodb.'
+		);
+	}
 }
-getLuanchesFromSpaceX();
 module.exports = {
+	getLuanchesFromSpaceX,
 	getLaunches,
 	addLaunch,
-	launchIsExist,
+	launchIsExistWithId,
 	deleteLaunchFromMap,
 };

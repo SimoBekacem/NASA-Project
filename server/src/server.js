@@ -9,6 +9,7 @@ const http = require('http');
 const process = require('process');
 const app = require('./app');
 const { loadPlanetData } = require('./modules/planets.module');
+const { getLuanchesFromSpaceX } = require('./modules/launch.module');
 const { mongoConnect } = require('./services/mongo');
 const PORT = 8080 | process.env.PORT;
 const server = http.createServer(app);
@@ -16,6 +17,7 @@ const server = http.createServer(app);
 async function startSever() {
 	await mongoConnect();
 	await loadPlanetData();
+	await getLuanchesFromSpaceX();
 	server.listen(PORT, () => {
 		console.log('we are listing to the PORT: ', PORT);
 	});

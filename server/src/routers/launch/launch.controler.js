@@ -3,7 +3,7 @@ const {
 	getLaunches,
 	addLaunch,
 	deleteLaunchFromMap,
-	launchIsExist,
+	launchIsExistWithId,
 } = require('../../modules/launch.module');
 
 async function getLaunch(req, res) {
@@ -33,7 +33,7 @@ async function postLaunch(req, res) {
 
 async function deleteLaunch(req, res) {
 	const launchId = Number(req.params.id);
-	if (!(await launchIsExist(launchId))) {
+	if (!(await launchIsExistWithId(launchId))) {
 		res.status(400).json({
 			error: 'this launch does not exist .',
 		});
