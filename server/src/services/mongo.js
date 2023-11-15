@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
-const MONGO_URL = 'mongodb://localhost:27017';
+
+const MONGO_URL = `mongodb://simohassane2002:EjkIwcZVhPoHCjcz@ac-rg7cej9-shard-00-00.0hhcpvj.mongodb.net:27017,ac-rg7cej9-shard-00-01.0hhcpvj.mongodb.net:27017,ac-rg7cej9-shard-00-02.0hhcpvj.mongodb.net:27017/?ssl=true&replicaSet=atlas-1e5swj-shard-0&authSource=admin&retryWrites=true&w=majority`;
+
+//if i working with mongodb desktop i should use this url but it doesn't work with docker
 
 mongoose.connection.once('open', () => {
 	console.log('Connected to the MongoDB');
