@@ -49,3 +49,4 @@ jobs:
                   push: true
                   tags: simohassane/nasa-project:latest
                   context: ..
+                  file: ../Dockerfile
