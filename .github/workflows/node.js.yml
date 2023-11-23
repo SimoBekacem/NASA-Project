@@ -48,4 +48,4 @@ jobs:
               with:
                   push: true
                   tags: simohassane/nasa-project:latest
-                  context: .
+                  context: ./
