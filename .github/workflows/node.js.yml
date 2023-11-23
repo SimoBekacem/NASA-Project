@@ -47,4 +47,4 @@ jobs:
               uses: docker/build-push-action@v5
               with:
                   push: true
-                  tags: simohassane/nasa-project
+                  tags: simohassane/nasa-project:latest
