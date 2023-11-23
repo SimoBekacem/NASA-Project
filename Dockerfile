@@ -12,7 +12,7 @@ COPY server/ server/
 RUN npm run install-server npm install --only=prod
 
 COPY client/ client/
-RUN npm run build -prefix client
+RUN npm run build --prefix client
 
 COPY server/ server/
 USER  node 
